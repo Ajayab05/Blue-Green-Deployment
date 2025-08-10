@@ -170,5 +170,6 @@ http://<jenkins-server-public-ip>:8080
   - Create your first admin user.
 
   - Confirm the Jenkins URL.
-
+    
+<img width="975" height="402" alt="image" src="https://github.com/user-attachments/assets/da1bc614-be1f-452c-9914-49eed4db2d1f" />
 
