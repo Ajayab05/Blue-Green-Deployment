@@ -436,4 +436,73 @@ kubectl describe secret mysecretname -n webapps
 Copy the `token`: field from the output and save it securely (e.g., in a notepad).
 This token will be used for authentication (e.g., from Jenkins or other tools).
 
+## Jenkins Credentials and Setup for Blue-Green Deployment Pipeline
+
+---
+
+### 1. Setting Up Credentials in Jenkins
+
+#### a) Kubernetes Token
+1. Go to **Jenkins Dashboard** → **Manage Jenkins** → **Credentials** → **(Global)** → **Add Credentials**  
+2. Set **Kind**: Secret text  
+3. Paste your **Kubernetes service account token** in the **Secret** field  
+4. Set **ID**: `k8-token`  
+5. Set **Description**: `k8-token`  
+6. Click **Create**
+
+#### b) GitHub Credential
+1. Set **Kind**: Username with password  
+2. Set **Username**: `yogeshrathod7`  
+3. Paste your **GitHub Personal Access Token** in the **Password** field  
+4. Set **ID**: `git-cred`  
+5. Set **Description**: `git-cred`  
+6. Click **Create**
+
+#### c) SonarQube Token
+1. Set **Kind**: Secret text  
+2. Paste your **SonarQube Token** in the **Secret** field  
+3. Set **ID**: `sonar-token`  
+4. Set **Description**: `sonar-token`  
+5. Click **Create**
+
+#### d) DockerHub Credential
+1. Set **Kind**: Username with password  
+2. Set **Username**: `yogeshrathod1137`  
+3. Paste your **DockerHub password** in the **Password** field  
+4. Set **ID**: `docker-cred`  
+5. Set **Description**: `docker-cred`  
+6. Click **Create**
+
+---
+
+### 2. Install Required Plugins
+
+Navigate to **Manage Jenkins** → **Plugins** → **Available Plugins** and install the following:
+
+- SonarQube Scanner  
+- Config File Provider  
+- Maven  
+- Pipeline Maven Integration  
+- Pipeline Stage View  
+- Docker  
+- Docker Pipeline  
+- Kubernetes  
+- Kubernetes Client API  
+- Kubernetes CLI  
+- Kubernetes Credentials  
+
+---
+
+### 3. Configure Tools
+
+Go to **Manage Jenkins** → **Tools** and configure:
+
+- **Maven Installations**  
+  - Click **Add**  
+  - Name: `maven3`  
+  - Choose **Install automatically** or configure to point to your local Maven installation  
+
+---
+
+
 
