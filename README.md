@@ -27,21 +27,25 @@ To deploy an application, we first need infrastructure. We will create an EKS cl
 - **Instance size:** t2.medium  
 - **Storage:** 20 GB  
 <img width="975" height="433" alt="image" src="https://github.com/user-attachments/assets/3588f48c-35ce-492e-84d8-6e7f62e3e49a" />
+
 ## Step 2: Connect to the VM & Install AWS CLI
 1. Update packages
 ```bash
 sudo apt update
 ```
+
 2. Install AWS CLI
 ```bash
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
 ```
+
 3. Configure AWS CLI
 ```bash
 aws configure
 ```
+
 Provide your:
 o	AWS Access Key
 o	AWS Secret Key
