@@ -52,4 +52,43 @@ Provide your:
 - Region
 - Output format (e.g., json)
 
+### Step 3: Install Terraform and Provision Infrastructure
+
+1. Install Terraform on the VM:
+```bash
+sudo snap install terraform --classic
+```
+
+2. Clone the repository:
+```bash
+git clone https://github.com/yogeshrathod7/Blue-Green-Deployment.git
+ls
+```
+
+3. Navigate to the cluster folder inside the cloned repository:
+```bash
+cd Blue-Green-Deployment/cluster
+```
+
+4. Update the configuration file:
+- Change the key pair name to match your local machine’s key pair.
+- Update the AWS region and availability zone as needed.
+
+5. Initialize Terraform:
+```bash
+terraform init
+```
+
+6. Review the Terraform plan:
+```bash
+terraform plan
+```
+
+7. Apply the Terraform configuration:
+```bash
+terraform apply
+```
+
+This will create a total of 17 AWS resources.
+
 
