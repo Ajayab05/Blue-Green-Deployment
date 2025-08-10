@@ -110,3 +110,37 @@ sudo snap install kubectl --classic
   - sonarqube
   - nexus
 
+<img width="975" height="237" alt="image" src="https://github.com/user-attachments/assets/f1b78f1f-bc66-4a80-84f1-61b48cd1cb24" />
+
+### Jenkins Server Setup
+
+a. Connect to Jenkins EC2
+```bash
+ssh -i <key.pem> ubuntu@<jenkins_public_ip>
+```
+
+b. Install Java (Jenkins prerequisite)
+```bash
+sudo apt install openjdk-17-jre-headless
+```
+
+c. Install Jenkins
+Add Jenkins GPG key
+```bash
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] \
+https://pkg.jenkins.io/debian-stable binary/" | sudo tee \
+/etc/apt/sources.list.d/jenkins.list > /dev/null 
+sudo apt-get update
+sudo apt-get install jenkins
+```
+
+d. Enable & Start Jenkins
+```bash
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+```
+
+
