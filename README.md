@@ -47,9 +47,9 @@ aws configure
 ```
 
 Provide your:
-o	AWS Access Key
-o	AWS Secret Key
-o	Region
-o	Output format (e.g., json)
+- AWS Access Key
+- AWS Secret Key
+- Region
+- Output format (e.g., json)
 
 
