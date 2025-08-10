@@ -245,6 +245,44 @@ docker ps
   - Username: admin
   - Password: stored inside container file /nexus-data/admin.password
 
+### Retrieve Admin Password
+```bash
+docker exec -it <container_id> /bin/bash
+cd sonatype-work/nexus3
+cat admin.password
+```
+
+### Post-Login Setup
+1. Log in with:
+   - Username: admin
+   - Password: (copied password from above)
+2. Set a new password.
+3. Disable anonymous access.
+4. Use the following repositories:
+  - maven-releases
+  - maven-snapshots
+
+## 3. Run SonarQube in Docker
+
+### Install Docker (if not already installed)
+```bash
+sudo apt update
+sudo apt install -y docker.io
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+### Run SonarQube Container
+```bash
+docker run -d -p 9000:9000 sonarqube:lts-community
+docker ps
+```
+
+### Access SonarQube
+- URL: ` http://<public_ip>:9000 `
+- Default credentials:
+  - Username: admin
+  - Password: admin
 
 
 
