@@ -242,8 +242,8 @@ docker ps
 ### Access Nexus
 - URL: http://<public_ip>:8081
 - Default credentials:
-  -- Username: admin
-  -- Password: stored inside container file /nexus-data/admin.password
+  - Username: admin
+  - Password: stored inside container file /nexus-data/admin.password
 
 
 
