@@ -501,8 +501,163 @@ Go to **Manage Jenkins** → **Tools** and configure:
   - Click **Add**  
   - Name: `maven3`  
   - Choose **Install automatically** or configure to point to your local Maven installation  
+<img width="975" height="402" alt="image" src="https://github.com/user-attachments/assets/e407bc78-0e53-4a7d-ac19-120921b2e0f9" />
+---
+### 4. SonarQube Scanner Installation in Jenkins
+
+- Navigate to **Manage Jenkins** → **Global Tool Configuration**  
+- Under **SonarQube Scanner**, click **Add SonarQube Scanner**  
+- Set **Name** to `sonar-scanner`  
+- Configure installation as needed (install automatically or point to local installation)  
+- Save the configuration
+<img width="975" height="418" alt="image" src="https://github.com/user-attachments/assets/7bb5562a-bc22-4a1a-8d2e-2b1ec28dcb17" />
+
+### 5. SonarQube Installation in Jenkins
+
+- Go to: **Manage Jenkins** → **System** → **SonarQube Server**
+- Add SonarQube installation:
+  - **Name:** sonar
+  - **Server URL:** http://<server_url>:9000
+  - **Authentication Token:** sonar-token (created in SonarQube UI)
+- Save the configuration.
 
 ---
+
+### 6. Nexus Configuration in Jenkins
+
+- Go to: **Manage Jenkins** → **Manage Files** → **Add new config**
+- Select **File Type:** Global Maven `settings.xml`
+  - **ID:** maven-settings
+  - Click **Next**
+- In the content section:
+  - Uncomment the `<password>` field and add Nexus credentials.
+  - Define separate `<server>` entries for:
+    - `maven-releases`
+    - `maven-snapshots`
+- Save the configuration.
+<img width="942" height="511" alt="image" src="https://github.com/user-attachments/assets/70f3e38e-e1c7-4c9b-8754-2ba012b51aa5" />
+Done – Save.
+
+### Configuring Maven Repositories in `pom.xml`
+
+#### 1. Maven Releases Repository
+- In Nexus UI, navigate to **Maven Releases** and copy the repository URL.
+- Open your project’s `pom.xml`.
+- Locate the `<repository>` section and update the Maven Releases URL:
+```xml
+<repository>
+  <id>maven-releases</id>
+  <url>http://<nexus-server>:8081/repository/maven-releases/</url>
+</repository>
+```
+
+- Save the file.
+
+### 2. Maven Snapshots Repository
+- In Nexus UI, navigate to Maven Snapshots and copy the repository URL.
+- In pom.xml, update the Maven Snapshots URL:
+```xml
+<repository>
+  <id>maven-snapshots</id>
+  <url>http://<nexus-server>:8081/repository/maven-snapshots/</url>
+</repository>
+```
+
+- Save the file.
+<img width="975" height="488" alt="image" src="https://github.com/user-attachments/assets/fd174f09-0982-473b-8f44-9b4419584bad" />
+
+### SonarQube Webhook Setup
+
+1. Go to the SonarQube UI.
+2. Navigate to:  
+   `Administration → Webhooks`
+3. Click **Create**:
+   - **Name**: jenkins  
+   - **URL**: `http://3.110.196.57:8080/sonarqube-webhook/` (Replace with your Jenkins URL)  
+   - Leave **Secret** blank.
+4. Click **Create**.
+
+---
+
+### Create Jenkins Pipeline
+
+1. In Jenkins UI:
+   - Create a new **Pipeline** job.
+   - Name it **Blue-Green**.
+   - Check **Discard Old Builds** and set max builds to keep: **2**.
+2. For the pipeline script, use the Jenkinsfile from your repository:  
+   [https://github.com/yogeshrathod7/Blue-Green-Deployment/blob/main/Jenkinsfile](https://github.com/yogeshrathod7/Blue-Green-Deployment/blob/main/Jenkinsfile)
+3. Save the pipeline.
+
+### Build Pipeline
+
+1. Click **Build Now**.  
+   - Abort this first build intentionally to enable parameterized builds.
+
+2. Click **Build with Parameters**.  
+   - Choose the parameter: `blue` or `green` depending on the deployment stage.
+
+3. Execute the build to deploy.
+
+<img width="975" height="404" alt="image" src="https://github.com/user-attachments/assets/068aaa4d-2548-47bf-840d-3a1dc522e7d9" />
+
+### Pipeline Build and Deployment
+
+- **First build:**  
+  - Pipeline runs successfully but skips the traffic switch stage.  
+  - It performs only the deployment of the application to the initial environment.
+
+- **Deploying a new feature:**  
+  - To deploy a new version, build the pipeline with the `green` parameter.  
+  - This triggers the pipeline to switch traffic from the blue environment to the green environment.  
+  - The pipeline executes successfully, and the new version is deployed with zero downtime.
+
+<img width="975" height="421" alt="image" src="https://github.com/user-attachments/assets/b9e1c7a7-4d07-402d-94b5-823d737cae3b" />
+
+### Rollback to Previous Version
+
+- If there is an issue with the newly deployed green version, you can easily rollback to the previous stable version.  
+- To do this, simply run the pipeline again with the `blue` parameter.  
+- This will switch the traffic back from the green environment to the blue environment, restoring the previous version with zero downtime.
+<img width="975" height="371" alt="image" src="https://github.com/user-attachments/assets/9ff19ed7-9d69-44cd-a17e-128c249f8abb" />
+
+### Rollback to Blue Environment - Success
+
+- The rollback to the blue environment was successful.  
+- Traffic is now routed back to the stable blue deployment, ensuring application availability without downtime.
+<img width="975" height="295" alt="image" src="https://github.com/user-attachments/assets/de4dfa5a-145f-4d3c-8e07-b19af84192a2" />
+
+### Nexus Artifacts - Success
+
+- Artifacts were successfully published and managed in the Nexus repository.  
+- Maven releases and snapshots repositories are properly configured and utilized.
+<img width="975" height="498" alt="image" src="https://github.com/user-attachments/assets/7b9420a7-6a56-4110-a457-76a11fa6798f" />
+
+<img width="975" height="339" alt="image" src="https://github.com/user-attachments/assets/bca00afa-9c2e-4edc-a6f5-1ca9559eb432" />
+
+### Verify Deployment on Kubernetes Cluster
+
+- Run the following command to check all resources in the `webapps` namespace:
+
+```bash
+kubectl get all -n webapps
+```
+- This will display pods, services, deployments, and other resources to confirm the deployment status.
+<img width="975" height="300" alt="image" src="https://github.com/user-attachments/assets/c4e9dd23-c438-4af7-a03c-1f32bb2b3a89" />
+
+### Access Application
+
+- After successful deployment, access the application using the service’s external endpoint or LoadBalancer URL.
+- Use a browser or API client to navigate to the application URL.
+- Confirm the application is running and serving traffic as expected.
+
+<img width="975" height="493" alt="image" src="https://github.com/user-attachments/assets/6021f15d-0fd9-4e49-ad4a-97193184e8b2" />
+
+<img width="975" height="490" alt="image" src="https://github.com/user-attachments/assets/221e2235-b80b-43af-9073-ef93e9a56216" />
+
+
+
+
 
 
 
