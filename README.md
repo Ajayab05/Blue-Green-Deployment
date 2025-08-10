@@ -281,8 +281,159 @@ docker ps
 ### Access SonarQube
 - URL: ` http://<public_ip>:9000 `
 - Default credentials:
-  - Username: admin
-  - Password: admin
+  - **Username**: admin
+  - **Password**: admin
+ 
+### Post-Login Setup
+1. Change the default password.
+2. Create a token:
+  - Navigate to: Administration → Security → Users → Token
+  - Provide a token name, e.g., sonar-token
+  - Generate and save the token for later use.
 
+## 4. Connect to EKS Cluster
+
+### 1. Test cluster connection
+```bash
+kubectl get nodes
+```
+
+- If you see an error like "Unable to connect to the server: ...", your kubeconfig is not configured correctly.
+
+### 2. Update kubeconfig with AWS CLI
+```bash
+aws eks --region ap-south-1 update-kubeconfig --name devopsshack-cluster
+```
+
+- `--region ap-south-1` → Your EKS region
+
+- `--name devopsshack-cluster` → Your EKS cluster name
+- This command updates `~/.kube/config` so `kubectl` can reach the cluster.
+
+### 3. Verify connection
+
+```bash
+kubectl get nodes
+```
+
+- Expected output:
+  <img width="878" height="141" alt="image" src="https://github.com/user-attachments/assets/93d19b77-fab1-49a3-9797-b0972e4513f0" />
+
+### 5. Kubernetes Namespace and Service Account Setup
+
+### 1. Create Namespace
+```bash
+kubectl create ns webapps
+```
+### 2. Create Service Account
+- Create a file `sa.yml` with the following content:
+```bash
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins
+  namespace: webapps
+```
+
+Apply the Service Account:
+
+```bash
+kubectl apply -f sa.yml
+```
+
+### 3. Create Role
+Create a file `role.yml` with:
+```bash
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-role
+  namespace: webapps
+rules:
+  - apiGroups:
+      - ""
+      - apps
+      - autoscaling
+      - batch
+      - extensions
+      - policy
+      - rbac.authorization.k8s.io
+    resources:
+      - pods
+      - componentstatuses
+      - configmaps
+      - daemonsets
+      - deployments
+      - events
+      - endpoints
+      - horizontalpodautoscalers
+      - ingress
+      - jobs
+      - limitranges
+      - namespaces
+      - nodes
+      - secrets
+      - persistentvolumes
+      - persistentvolumeclaims
+      - resourcequotas
+      - replicasets
+      - replicationcontrollers
+      - serviceaccounts
+      - services
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+```
+
+Apply the role:
+```bash
+kubectl apply -f role.yml
+```
+
+### 4. Bind Role to Service Account
+Create a file named `role-bind.yml` with the following content:
+```bash
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-rolebinding
+  namespace: webapps
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: app-role
+subjects:
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: webapps
+```
+
+Apply the role binding:
+```bash
+kubectl apply -f role-bind.yml
+```
+
+### 5. Create Secret for the Service Account
+Create a file named `sec.yml` with the following content:
+```bash
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: mysecretname
+  annotations:
+    kubernetes.io/service-account.name: jenkins
+```
+
+Apply the secret:
+```bash
+kubectl apply -f sec.yml -n webapps
+```
+
+### 6. Retrieve the Token
+Run:
+```bash
+kubectl describe secret mysecretname -n webapps
+```
+Copy the `token`: field from the output and save it securely (e.g., in a notepad).
+This token will be used for authentication (e.g., from Jenkins or other tools).
 
 
