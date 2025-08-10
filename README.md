@@ -152,6 +152,8 @@ Run the following command on the Jenkins server to get the initial admin passwor
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
+<img width="975" height="402" alt="image" src="https://github.com/user-attachments/assets/da1bc614-be1f-452c-9914-49eed4db2d1f" />
+
 Access Jenkins UI and Complete Setup
 
 You’ll see a long alphanumeric string after running the command — this is your initial Jenkins admin password.
@@ -171,5 +173,4 @@ http://<jenkins-server-public-ip>:8080
 
   - Confirm the Jenkins URL.
     
-<img width="975" height="402" alt="image" src="https://github.com/user-attachments/assets/da1bc614-be1f-452c-9914-49eed4db2d1f" />
 
