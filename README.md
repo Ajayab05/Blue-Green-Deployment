@@ -91,4 +91,22 @@ terraform apply
 
 This will create a total of 17 AWS resources.
 
+<img width="921" height="506" alt="image" src="https://github.com/user-attachments/assets/2911325f-56ec-4390-8f98-f9bf6318cb6f" />
+
+### Step 4: Install kubectl on the VM
+
+```bash
+sudo snap install kubectl --classic
+```
+
+### Step 5: Launch 3 Instances (Jenkins, SonarQube, and Nexus)
+- Instance Count: 3
+- Instance Type: t2.medium
+- Key Pair: Select the previously created key pair
+- Security Group: Select the previously created security group
+- Storage: 25 GB for each instance
+- Rename Instances As:
+  - jenkins
+  - sonarqube
+  - nexus
 
