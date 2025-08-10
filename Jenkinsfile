@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    tools {
+        maven "maven3"
+    }
+    
     parameters {
         choice(name: 'DEPLOY_ENV', choices: ['blue', 'green'], description: 'Choose which environment to deploy: Blue or Green')
         choice(name: 'DOCKER_TAG', choices: ['blue', 'green'], description: 'Choose the Docker image tag for the deployment')
@@ -11,7 +15,7 @@ pipeline {
         IMAGE_NAME = "yogeshrathod1137/bankapp"
         TAG = "${params.DOCKER_TAG}"  // The image tag now comes from the parameter
         KUBE_NAMESPACE = 'webapps'
-        SCANNER_HOME= tool 'sonar-scanner'
+        SONAR_HOME = tool "sonar-scanner"
     }
 
     stages {
@@ -21,21 +25,61 @@ pipeline {
             }
         }
         
-        stage('SonarQube Analysis') {
+        stage('Compile') {
             steps {
-                withSonarQubeEnv('sonar') {
-                    sh "$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectKey=nodejsmysql -Dsonar.projectName=nodejsmysql"
-                }
+                sh "mvn compile"
             }
         }
         
-        stage('Trivy FS Scan') {
+        stage('Tests') {
+            steps {
+                sh "mvn test -DskipTests=true"
+            }
+        }
+        
+        stage('Trivy FS_Scan') {
             steps {
                 sh "trivy fs --format table -o fs.html ."
             }
         }
         
-        stage('Docker build') {
+        stage('Sonarqube Analysis') {
+            steps {
+                     withSonarQubeEnv('sonar') {
+            sh '''
+                mvn clean compile
+                $SONAR_HOME/bin/sonar-scanner \
+                  -Dsonar.projectKey=Multitier \
+                  -Dsonar.projectName=Multitier \
+                  -Dsonar.java.binaries=target/classes
+            '''
+                }
+            }
+        }
+        
+        stage('Quality Gate Check') {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: false
+                }
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh "mvn package -DskipTests=true"
+            }
+        }
+        
+        stage('Publish artifacts to Nexus') {
+            steps {
+                withMaven(globalMavenSettingsConfig: 'maven-settings.xml', jdk: '', maven: 'maven3', mavenSettingsConfig: '', traceability: true) {
+                    sh "mvn deploy -DskipTests=true"
+                }
+            }
+        }
+        
+        stage('Docker Build and Tag Image') {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'docker-cred') {
@@ -45,7 +89,7 @@ pipeline {
             }
         }
         
-        stage('Trivy Image Scan') {
+        stage('Trivy Image_Scan') {
             steps {
                 sh "trivy image --format table -o image.html ${IMAGE_NAME}:${TAG}"
             }
@@ -61,7 +105,7 @@ pipeline {
             }
         }
         
-        stage('Deploy MySQL Deployment and Service') {
+         stage('Deploy MySQL Deployment and Service') {
             steps {
                 script {
                     withKubeConfig(caCertificate: '', clusterName: 'devopsshack-cluster', contextName: '', credentialsId: 'k8-token', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://0F53FCC88FBB44BC9DE87F9F80311647.gr7.ap-south-1.eks.amazonaws.com') {
@@ -132,6 +176,6 @@ pipeline {
                     }
                 }
             }
-        }
     }
+}
 }
