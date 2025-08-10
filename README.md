@@ -1,5 +1,5 @@
- # Production Level Blue-Green Deployment CICD Pipeline
-
+# Production Level Blue-Green Deployment CICD Pipeline
+<img width="975" height="490" alt="image" src="https://github.com/user-attachments/assets/221e2235-b80b-43af-9073-ef93e9a56216" />
 ## Overview
 Blue-Green Deployment is a release strategy where two identical environments (“Blue” and “Green”) run in parallel.  
 - **Blue** = Current live environment  
@@ -653,7 +653,7 @@ kubectl get all -n webapps
 
 <img width="975" height="493" alt="image" src="https://github.com/user-attachments/assets/6021f15d-0fd9-4e49-ad4a-97193184e8b2" />
 
-<img width="975" height="490" alt="image" src="https://github.com/user-attachments/assets/221e2235-b80b-43af-9073-ef93e9a56216" />
+
 
 
 
