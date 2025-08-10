@@ -161,11 +161,11 @@ You’ll see a long alphanumeric string after running the command — this is yo
 http://<jenkins-server-public-ip>:8080
 ```
 
-2. Paste the password into the *Unlock Jenkins* screen.
+2. Paste the password into the **Unlock Jenkins** screen.
 
 3. Follow the setup wizard:
 
-  - Install Suggested Plugins.
+  - Install **Suggested Plugins**.
 
   - Create your first admin user.
 
