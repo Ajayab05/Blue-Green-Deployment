@@ -143,4 +143,32 @@ sudo systemctl start jenkins
 sudo systemctl status jenkins
 ```
 
+<img width="975" height="282" alt="image" src="https://github.com/user-attachments/assets/851be11a-c144-41ff-9667-5dc62c25a41e" />
+
+Access Jenkins Initial Admin Password
+
+Run the following command on the Jenkins server to get the initial admin password required to unlock Jenkins for the first time:
+```bash
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+Access Jenkins UI and Complete Setup
+
+You’ll see a long alphanumeric string after running the command — this is your initial Jenkins admin password.
+
+1. Open your browser and navigate to:
+```bash
+http://<jenkins-server-public-ip>:8080
+```
+
+2. Paste the password into the *Unlock Jenkins* screen.
+
+3. Follow the setup wizard:
+
+  - Install Suggested Plugins.
+
+  - Create your first admin user.
+
+  - Confirm the Jenkins URL.
+
 
