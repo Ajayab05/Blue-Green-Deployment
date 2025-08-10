@@ -173,20 +173,20 @@ http://<jenkins-server-public-ip>:8080
 
   - Confirm the Jenkins URL.
 
-### Update system and install prerequisites
+#### Update system and install prerequisites
 ```bash
 sudo apt-get update
 sudo apt-get install -y ca-certificates curl
 ```
 
-### Add Docker's official GPG key
+#### Add Docker's official GPG key
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 ```
 
-### Add Docker repository
+#### Add Docker repository
 ```bash
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
@@ -194,16 +194,57 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 ```
 
-### Install Docker packages
+#### Install Docker packages
 ```bash
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
-### Add Jenkins user to Docker group
+#### Add Jenkins user to Docker group
 ```bash
 sudo usermod -aG docker jenkins
 ```
+### Install Trivy
+```bash
+sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt-get update
+sudo apt-get install -y trivy
+```
+
+### Install kubectl
+```bash
+sudo snap install kubectl --classic
+```
+
+### Restart Jenkins Server
+```bash
+sudo systemctl restart jenkins
+```
+
+## 2. Run Nexus in Docker
+
+### Install Docker (if not already installed)
+```bash
+sudo apt update
+sudo apt install -y docker.io
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+### Run Nexus Container
+```bash
+docker run -d -p 8081:8081 sonatype/nexus3
+docker ps
+```
+
+### Access Nexus
+- URL: http://<public_ip>:8081
+- Default credentials:
+  -- Username: admin
+  -- Password: stored inside container file /nexus-data/admin.password
+
 
 
 
