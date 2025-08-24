@@ -18,7 +18,7 @@ Blue-Green Deployment is a release strategy where two identical environments (â€
 
 To deploy an application, we first need infrastructure. We will create an EKS cluster using Terraform.
 
-- Create a security group with the required ports.
+- Create a security group with the required ports
 
 ---
 <img width="975" height="231" alt="image" src="https://github.com/user-attachments/assets/4698e911-d66f-4400-b841-921d25d3b5b6" />
