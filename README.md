@@ -9,7 +9,7 @@ Blue-Green Deployment is a release strategy where two identical environments (â€
 - Traffic switches from Blue â†’ Green after testing the new version, ensuring zero downtime.
 
 ### In this setup, we will:
-1. Provision infrastructure (EKS Cluster) using Terraform.  
+1. Provision infrastructure(EKS Cluster) using Terraform.  
 2. Deploy the application using the Blue-Green deployment strategy.  
 3. Automate the process via a CICD pipeline.
 ---
