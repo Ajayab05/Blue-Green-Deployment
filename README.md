@@ -158,7 +158,7 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 Access Jenkins UI and Complete Setup
 
-You’ll see a long alphanumeric string after running the command — this is your initial Jenkins admin password.
+You will see a long alphanumeric string after running the command — this is your initial Jenkins admin password.
 
 1. Open your browser and navigate to:
 ```bash
